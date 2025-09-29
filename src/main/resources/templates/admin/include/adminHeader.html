@@ -1,0 +1,50 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- custom.css에서 스타일을 가져오므로 <style> 태그는 필요 없습니다. -->
+</head>
+<body>
+<!-- Navbar (관리자 모드) -->
+<!-- 🌟 수정: 헤더 자체는 좌우 여백 없이 전체 폭을 사용하도록 변경합니다. 🌟 -->
+<nav class="navbar navbar-expand-lg navbar-custom" th:fragment="adminHeader">
+
+    <!-- 🌟 수정: nav 안에 있던 div.container를 제거하거나 container-fluid로 변경합니다.
+         헤더 내용이 꽉 차게 보이려면 nav 바로 아래에 콘텐츠를 배치하는 것이 가장 좋습니다. 🌟 -->
+
+    <a class="navbar-brand" href="/admin/main">
+        <img th:src="@{/images/logo.png}" alt="logo" height="60px;">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContentAdmin" aria-controls="navbarSupportedContentAdmin"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContentAdmin">
+        <!-- navbar-nav mr-auto: 왼쪽 정렬 -->
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/buy">거래관리</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/goods/list">상품관리</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/member">회원관리</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/notice">공지사항</a>
+            </li>
+        </ul>
+        <!-- 로그인/로그아웃 버튼을 오른쪽 끝으로 보냅니다 -->
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link btn btn-sm btn-orange" href="/admin/logout" style="color: white !important;">로그아웃</a>
+            </li>
+        </ul>
+        <!-- 검색 폼은 관리자모드에서는 제거했습니다. -->
+
+    </div>
+</nav>
+
+</body>
+</html>

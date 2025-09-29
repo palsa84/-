@@ -1,0 +1,113 @@
+/* Navbar 색상 */
+.navbar-custom {
+  background-color: #ffe5cc !important; /* 연한 살구빛 주황 */
+}
+
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+  color: #cc6600 !important; /* 글자는 차분한 진주황 */
+  font-weight: 500;
+}
+
+.navbar-custom .nav-link:hover {
+  color: #994d00 !important; /* hover 시 조금 더 진한 주황 */
+}
+
+
+/* 버튼 색상 */
+.btn-orange {
+  background-color: #ff9966 !important; /* 밝고 부드러운 주황 */
+  border: none;
+  color: white !important;
+}
+
+.btn-orange:hover {
+  background-color: #ff884d !important;
+}
+
+/* Jumbotron 꾸미기 (header.html에서 이동) */
+.jumbotron-custom {
+  background-color: #fff8f0 !important; /* 아주 연한 주황 배경 */
+  color: #333 !important;
+  border-left: 5px solid #ff9966;
+  padding: 2rem;
+}
+
+/* 상품 카드 디자인 */
+.card {
+  border-radius: 12px;            /* 모서리 둥글게 */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* 은은한 그림자 */
+  transition: transform 0.2s, box-shadow 0.2s; /* hover 애니메이션 */
+}
+
+.card:hover {
+  transform: translateY(-4px);   /* 살짝 위로 떠오르는 효과 */
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+/* ------------------------------------------------------------------ */
+/* 🌟 모든 버튼의 포커스 링 및 그림자 완벽 제거 🌟 */
+/* 부트스트랩의 모든 버튼에 적용되는 포커스/활성화 스타일을 강제로 제거 */
+.btn:focus,
+.btn.focus {
+    outline: 0 !important; /* 브라우저 기본 포커스 아웃라인 제거 */
+    box-shadow: none !important; /* 부트스트랩 포커스 링 그림자 제거 */
+}
+/* ------------------------------------------------------------------ */
+
+
+/* 카테고리 필터 버튼 스타일 */
+.filter-btn {
+  /* 🌟🌟🌟 수정된 부분 🌟🌟🌟 */
+  padding: 10px 30px !important; /* 위아래 10px, 좌우 30px로 확대 */
+  font-size: 1.1rem; /* 폰트 크기 확대 */
+  /* 🌟🌟🌟 ----------------- 🌟🌟🌟 */
+
+  /* 테두리 제거 및 그림자 제거 (나머지 스타일은 그대로 유지) */
+  border: none !important;
+  box-shadow: none !important;
+
+  /* 모양 및 전환 효과 */
+  border-radius: 5px !important;
+  margin: 0 8px;
+  transition: all 0.2s;
+
+  /* 기본 비활성화 상태 스타일 */
+  color: #ff9966 !important;
+  background-color: transparent !important;
+}
+
+/* 필터 버튼 (활성화 상태) 스타일 */
+.filter-btn.active {
+  background-color: #ff9966 !important; /* 밝은 주황 */
+  color: #fff !important; /* 글자색 흰색 */
+  box-shadow: none !important; /* 그림자 완전히 제거 */
+}
+
+/* 필터 버튼 (포커스 시) 스타일 재확인 */
+.filter-btn:focus,
+.filter-btn.active:focus {
+    outline: 0 !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+.filter-btn:not(.active):hover {
+  background-color: #fff0e0 !important; /* 호버 시 아주 연한 주황색 배경 */
+  transform: translateY(-1px);
+}
+
+/* 카드 안 '자세히 보기' 버튼 스타일 (그림자 없음) */
+.btn-primary {
+  background-color: #ff9966 !important;
+  border: none !important;
+  color: #fff !important;
+  transition: background-color 0.2s, transform 0.2s;
+  box-shadow: none !important; /* 그림자 완전히 제거 */
+}
+
+.btn-primary:hover {
+  background-color: #ff884d !important;
+  transform: scale(1.05); /* hover 시 살짝 확대 */
+}

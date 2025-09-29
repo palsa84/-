@@ -31,6 +31,15 @@ public class GoodsDTO {
     private int fileAttached; //파일 첨부 여부
 
 
+    private String category;
+
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
 // GoodsDTO.java 파일 내의 toGoodsDTO 메서드
 
     public static GoodsDTO toGoodsDTO(GoodsEntity goodsEntity) {
@@ -45,6 +54,10 @@ public class GoodsDTO {
         goodsDTO.setGoodsContents(goodsEntity.getGoodsContents());
         goodsDTO.setGoodsHits(goodsEntity.getGoodsHits());
 
+
+        // 카테고리
+        goodsDTO.setCategory(goodsEntity.getGoodsOpt());
+
         // 2. BaseEntity 필드 복사
         goodsDTO.setCreatedTime(goodsEntity.getCreatedTime());
         goodsDTO.setUpdatedTime(goodsEntity.getUpdatedTime());
@@ -54,8 +67,7 @@ public class GoodsDTO {
 
 
         // 4. 파일 첨부 정보 복사 (첨부 파일이 있을 때만 실행)
-        if (goodsEntity.getFileAttached() == 1) { // ⬅️ 이전 DTO에서는 0일 때와 1일 때 로직을 나누었습니다.
-
+        if (goodsEntity.getFileAttached() == 1) {
             // GoodsFileEntityList에서 파일 이름 정보를 가져와 DTO에 설정
             if (!goodsEntity.getGoodsFileEntityList().isEmpty()) {
                 goodsDTO.setOriginalFileName(goodsEntity.getGoodsFileEntityList().get(0).getOriginalFileName());

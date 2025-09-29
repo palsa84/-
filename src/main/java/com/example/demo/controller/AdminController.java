@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+// Pageable, PageableDefault, Sort 관련 import는 필요 없으므로 제거되거나 사용되지 않습니다.
 
 import java.io.IOException;
 import java.util.List;
@@ -93,12 +94,31 @@ public class AdminController {
     }
 
 
+    // 🌟 수정: 관리자 목록 복구 (페이지네이션 관련 코드 삭제)
     @GetMapping("/goods/list")
     public String findAll1(Model model) {
-        List<GoodsDTO> goodsDTOList = goodsService.findAll();
+        List<GoodsDTO> goodsDTOList = goodsService.findAllAdmin(); // findAllAdmin 호출
         model.addAttribute("goodsList", goodsDTOList);
         return "/admin/goods/list";
     }
 
+    // 🌟 상품 수정 및 삭제 관련 메서드는 유지합니다.
+    @GetMapping("/goods/edit/{id}")
+    public String goodsEditForm(@PathVariable("id") Long id, Model model) {
+        GoodsDTO goodsDTO = goodsService.findById(id);
+        model.addAttribute("goodsEdit", goodsDTO);
+        return "/admin/goods/edit";
+    }
 
+    @PostMapping("/goods/edit")
+    public String goodsUpdate(@ModelAttribute GoodsDTO goodsDTO) throws IOException {
+        goodsService.update(goodsDTO);
+        return "redirect:/admin/goods/list";
+    }
+
+    @GetMapping("/goods/delete/{id}")
+    public String goodsDelete(@PathVariable("id") Long id) {
+        goodsService.delete(id);
+        return "redirect:/admin/goods/list";
+    }
 }

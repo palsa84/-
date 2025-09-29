@@ -4,18 +4,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" xintegrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/custom.css}">
     <title th:text="${goods.goodsTitle}">상품 상세</title>
 </head>
 <body>
 
-<div th:replace="~{admin/include/header.html :: header}"></div>
+<div th:replace="~{include/header.html :: header}"></div>
 
 
 <div class="container my-5">
     <div class="row">
 
+        <!-- 상품 이미지 -->
         <div class="col-md-4">
             <img th:src="@{|/upload/${goods.storedFileName}|}"
                  class="img-fluid"
@@ -23,9 +24,10 @@
                  style="width: 80%; height: auto;">
         </div>
 
+        <!-- 상품 상세 정보 및 댓글 섹션 -->
         <div class="col-md-8">
             <h2 th:text="${goods.goodsTitle}">상품 제목</h2>
-            <h4 class="text-danger" th:text="|${goods.goodsCost} 원|">원</h4>
+            <h4 class="text-danger" th:text="|${goods.goodsCost} 원|"></h4>
 
 
             <p th:utext="${goods.goodsContents}" style="white-space: pre-wrap;">상품 설명</p>
@@ -35,9 +37,7 @@
                 <input type="number" id="quantity" class="form-control w-25" value="1" min="1">
             </div>
             <a  href="" class="btn btn-primary btn-lg mr-2">찜하기</a>
-<!--            <a  href="/goods/like" class="btn btn-primary btn-lg mr-2">찜하기</a>-->
             <a href="" class="btn btn-success btn-lg">구매하기</a>
-<!--            <a href="/order/write" class="btn btn-success btn-lg">구매하기</a>-->
 
             <p class="mt-3 text-muted" th:text="|조회수 : ${goods.goodsHits}|">조회수 : 0</p>
 
@@ -51,70 +51,191 @@
             <ul class="nav nav-tabs" id="productTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="description-tab" data-toggle="tab" href="#description"
-                       role="tab" aria-controls="deacription" aria-selected="true"> 상품설명</a>
+                       role="tab" aria-controls="description" aria-selected="true"> 상품 상세 설명</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" id="review-tab" data-togle="tab" href="#reviews" role="tab"
-                       aira-controls="reviews" aria-selected="false">리뷰</a>
+                    <a class="nav-link" id="review-tab" data-toggle="tab" href="#reviews" role="tab"
+                       aria-controls="reviews" aria-selected="false">댓글</a>
                 </li>
             </ul>
+
             <div class="tab-content" id="productTabContent">
-                <div class="tab-pane fade show active p-3" id="description" role="tabpanel"
-                     aria-labelledby="description-tab" th:utext="${goods.goodsContents}">
+
+                <!-- 상품 상세 설명 탭 (기존 내용) -->
+                <div class="tab-pane fade show active p-4 border border-top-0" id="description" role="tabpanel"
+                     aria-labelledby="description-tab">
+
+                    <div class="product-description-content" th:utext="${goods.goodsContents}">
+                    </div>
                 </div>
 
-                <div id="comment-list">
-                    <table>
-                        <tbody>
-                        <tr>
-                            <th>번호</th>
-                            <th>작성자</th>
-                            <th>내용</th>
-                            <th>등록일</th>
-                        </tr>
-                        <tr>
-                            <th>1</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <script th:inline="javascript">
-                    const commentWrite = () => {
-                        const writer = document.getElementsById("commentWriter").vale;
-                        const contents = document.getElementsById("commentContents").value;
-                        console.log("작성자 : ", writer );
-                        console.log("내용: ", contents);
-                        const id = [[${goods.id}]];
-                        $.ajax({
-                            type: "post",
-                            url: "comment/save",
-                            data: {
-                                "commentWriter": writer,
-                                "commentContents": contents,
-                                "goodsId": id
-                            },
-                            success:function(res){
-                                console.log("요청 성공", res);
-                            }
-                            error:function(err) {
-                                console.log("요청 실패", err);
-                            }
-                        });
-                    }
+                <!-- 댓글 탭 (디자인 유지 및 기능 추가) -->
+                <div class="tab-pane fade p-4 border border-top-0" id="reviews" role="tabpanel" aria-labelledby="review-tab">
 
-                </script>
+                    <div class="mb-4 p-3 border rounded">
+                        <h5>댓글 작성</h5>
+                        <div class="form-row">
+                            <div class="col-md-3 mb-2">
+                                <input type="text" id="commentWriter" class="form-control" placeholder="작성자">
+                            </div>
+                            <div class="col-md-7 mb-2">
+                                <input type="text" id="commentContents" class="form-control" placeholder="댓글 내용을 입력하세요">
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <!-- 등록 버튼: onclick 이벤트로 JavaScript 함수 호출 -->
+                                <button type="button" class="btn btn-sm btn-info btn-block" onclick="commentWrite()">등록</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="comment-list-area">
+                        <h5 class="mt-4 mb-3">댓글 목록</h5>
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                            <tr>
+                                <th style="width: 10%;">번호</th>
+                                <th style="width: 20%;">작성자</th>
+                                <th style="width: 50%;">내용</th>
+                                <th style="width: 20%;">등록일</th>
+                            </tr>
+                            </thead>
+                            <!-- 댓글이 동적으로 표시될 영역 -->
+                            <tbody id="comment-list">
+                            <!-- 초기에는 빈 상태, JS가 로드 후 데이터를 채움 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 댓글 탭 끝 -->
             </div>
+            <!-- tab-content 끝 -->
         </div>
+        <!-- col-12 끝 -->
     </div>
+    <!-- row mt-5 끝 -->
+
+    <!-- 푸터 include 경로 수정 완료 -->
+    <div th:replace="~{include/footer.html :: footer}"></div>
 </div>
+<!-- container my-5 끝 -->
 
 
-<div th:replace="~{admin/include/footer.html :: footer}"></div>
+<!-- 🌟 중요: jQuery 및 Bootstrap 스크립트 로드 (AJAX 및 Bootstrap 기능에 필수) 🌟 -->
+<!-- jQuery Full 버전 ($.ajax 사용) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" xintegrity="sha384-9/reFTGAW83EW2R2+Wn4T/sszGgdaJsk9lqE55xH4Zk2yC0fC2aC1DkX7y6g0P4o4" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" xintegrity="sha384-7u8GK99o3T9L7sLqG0sFf4kKqgP2LwE5/3p5tB1Ff6n6G8/1QJ/g/8" crossorigin="anonymous"></script>
+<!-- JavaScript 코드 블록 (기능 구현) -->
+<script th:inline="javascript">
+    // Thymeleaf 변수를 JavaScript로 가져옴
+    const goodsId = [[${goods.id}]];
 
+    // 1. 댓글 목록을 화면에 그려주는 함수 (HTML 테이블 생성)
+                            const displayCommentList = (commentList) => {
+                            const $commentTableBody = $('#comment-list'); // jQuery 사용
+                            $commentTableBody.empty(); // 기존 목록 삭제
 
+                            if (commentList && commentList.length > 0) {
+                                commentList.forEach((comment, index) => {
+                                    // 댓글 번호를 최신순으로 표시 (총 개수 - 현재 인덱스)
+                                    const commentNo = commentList.length - index;
 
+                                    // LocalDateTime을 yyyy-MM-dd HH:mm 형식으로 표시 (서버에서 JSON 직렬화된 문자열을 가정)
+                                    const formattedTime = comment.createdTime ? comment.createdTime.substring(0, 16).replace('T', ' ') : '-';
+
+                                    const row = `
+                                        <tr>
+                                            <td>${commentNo}</td>
+                                            <td>${comment.commentWriter}</td>
+                                            <td>${comment.commentContents}</td>
+                                            <td>${formattedTime}</td>
+                                        </tr>
+                                    `;
+                                    $commentTableBody.append(row);
+                                });
+                            } else {
+                                 const row = `
+                                    <tr>
+                                        <td colspan="4" class="text-center">등록된 댓글이 없습니다.</td>
+                                    </tr>
+                                `;
+                                // 🌟 수정된 부분: 댓글이 없을 때 생성한 row를 테이블에 추가합니다.
+                                $commentTableBody.append(row);
+                            }
+                        }
+
+    // 2. 초기 댓글 목록 로드 함수
+    // 이 함수는 페이지 로드 시 바로 호출됩니다.
+    const findAllComment = () => {
+        console.log("초기 댓글 목록 로드 시작");
+        // 상품 ID가 유효한 경우에만 AJAX 호출
+        if (!goodsId) {
+            console.error("상품 ID가 유효하지 않아 댓글을 로드할 수 없습니다.");
+            return;
+        }
+
+        $.ajax({
+            type: "get",
+            // 서버의 CommentController의 /comment/list/{goodsId} 경로 호출
+            url: `/comment/list/${goodsId}`,
+            success: function(res) {
+                console.log("댓글 목록 로드 성공", res);
+                displayCommentList(res);
+            },
+            error: function(err) {
+                console.log("댓글 목록 로드 실패", err);
+            }
+        });
+    }
+
+    // 3. 댓글 작성 및 등록 처리 함수 (버튼 클릭 시 호출)
+    const commentWrite = () => {
+        // 오타 수정: getElementById, value를 정확히 사용
+        const writer = document.getElementById("commentWriter").value;
+        const contents = document.getElementById("commentContents").value;
+
+        // 입력값 유효성 검사
+        if (!writer.trim() || !contents.trim()) {
+            alert("작성자와 내용을 모두 입력해주세요.");
+            return;
+        }
+
+        $.ajax({
+            type: "post",
+            url: "/comment/save", // 댓글 저장 서버 경로
+            data: {
+                "commentWriter": writer,
+                "commentContents": contents,
+                "goodsId": goodsId
+            },
+            success: function(res) {
+                console.log("댓글 저장 성공 및 목록 갱신", res);
+
+                // 서버에서 갱신된 목록(JSON List)을 받아 화면 업데이트
+                displayCommentList(res);
+
+                // 입력창 초기화
+                document.getElementById("commentWriter").value = '';
+                document.getElementById("commentContents").value = '';
+            },
+            error: function(err) {
+                console.log("댓글 저장 실패", err);
+                alert("댓글 저장에 실패했습니다. (서버 로그 확인 필요)");
+            }
+        });
+    }
+
+    // 🌟 수정된 부분: jQuery 준비 이벤트 발생 시 바로 댓글 목록 로드 🌟
+    $(document).ready(function() {
+        findAllComment();
+
+        // 부트스트랩 탭 이벤트 핸들러는 제거하거나 주석 처리합니다.
+        // 탭 클릭 시 목록 갱신을 원하지 않으면 이 부분은 주석처리하거나 제거합니다.
+        // $('#review-tab').on('shown.bs.tab', function (e) {
+        //     findAllComment();
+        // });
+    });
+
+</script>
 </body>
 </html>

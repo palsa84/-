@@ -41,6 +41,11 @@ public class GoodsEntity extends BaseEntity {
     @OneToMany(mappedBy = "goodsEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<GoodsFileEntity> goodsFileEntityList = new ArrayList<>();
 
+    // 🌟 추가: 댓글 리스트 매핑
+    @OneToMany(mappedBy = "goodsEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch=FetchType.LAZY)
+    private List<CommentEntity> commentEntityList = new ArrayList<>();
+
+
     // DTO -> Entity 변환 메서드 (파일 첨부 여부는 DTO에서 가져옴)
     public static GoodsEntity toSaveEntity(GoodsDTO goodsDTO) {
         GoodsEntity goodsEntity = new GoodsEntity();
@@ -64,6 +69,19 @@ public class GoodsEntity extends BaseEntity {
         goodsEntity.setGoodsBrand(goodsDTO.getGoodsBrand());
         goodsEntity.setGoodsContents(goodsDTO.getGoodsContents());
         goodsEntity.setGoodsHits(0);
+        goodsEntity.setFileAttached(goodsDTO.getFileAttached());
+
+        return goodsEntity;
+    }
+    public static GoodsEntity toUpdateEntity(GoodsDTO goodsDTO) {
+        GoodsEntity goodsEntity = new GoodsEntity();
+        goodsEntity.setId(goodsDTO.getId()); // ID 설정
+        goodsEntity.setGoodsOpt(goodsDTO.getGoodsOpt());
+        goodsEntity.setGoodsTitle(goodsDTO.getGoodsTitle());
+        goodsEntity.setGoodsCost(goodsDTO.getGoodsCost());
+        goodsEntity.setGoodsBrand(goodsDTO.getGoodsBrand());
+        goodsEntity.setGoodsContents(goodsDTO.getGoodsContents());
+        goodsEntity.setGoodsHits(goodsDTO.getGoodsHits()); // 기존 조회수 유지
         goodsEntity.setFileAttached(goodsDTO.getFileAttached());
 
         return goodsEntity;

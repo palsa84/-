@@ -9,12 +9,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional; // findById를 위해 Optional 임포트 추가
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,15 +32,18 @@ public class GoodsService {
         // 1. 첨부파일 처리 로직...
         if (goodsDTO.getGoodsFile() == null || goodsDTO.getGoodsFile().isEmpty()) {
             goodsDTO.setFileAttached(0);
+            goodsDTO.setOriginalFileName(null);
+            goodsDTO.setStoredFileName(null);
         } else {
             MultipartFile goodsFile = goodsDTO.getGoodsFile();
             String originalFileName = goodsFile.getOriginalFilename();
             String storedFileName = System.currentTimeMillis() + "_" + originalFileName;
             String savePath = "C:/project_img/" + storedFileName;
             goodsFile.transferTo(new File(savePath));
+
             goodsDTO.setOriginalFileName(originalFileName);
             goodsDTO.setStoredFileName(storedFileName);
-            goodsDTO.setFileAttached(1);
+            goodsDTO.setFileAttached(1); // 파일 있음
         }
 
         // 2. Entity 저장 로직...
@@ -54,29 +61,52 @@ public class GoodsService {
         }
     }
 
-    // 1. 상품 목록 전체 조회 및 순번 부여 (오류 수정 완료)
+    // 1. 사용자 페이지용: 상품 목록 전체 조회 (페이지네이션 + 필터링 적용)
     @Transactional
-    public List<GoodsDTO> findAll() {
+    public Page<GoodsDTO> findAll(Pageable pageable, String category) {
+        int page = pageable.getPageNumber() == 0 ? 0 : pageable.getPageNumber() - 1;
+        int pageLimit = 9;
+
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                pageLimit,
+                Sort.by(Sort.Direction.DESC, "id")
+        );
+
+        Page<GoodsEntity> goodsEntityPage;
+
+        if (category != null && !category.equals("all")) {
+            // 특정 카테고리로 필터링
+            goodsEntityPage = goodsRepository.findByGoodsOpt(category, pageRequest);
+        } else {
+            // 🌟 'all' 또는 category가 null일 때 전체 조회 (이 로직이 중요합니다)
+            goodsEntityPage = goodsRepository.findAll(pageRequest);
+        }
+
+        Page<GoodsDTO> goodsDTOPage = goodsEntityPage.map(GoodsDTO::toGoodsDTO);
+
+        return goodsDTOPage;
+    }
+
+    // 2. 관리자 페이지용: 상품 목록 전체 조회 및 순번 부여 (페이지네이션 없음)
+    @Transactional
+    public List<GoodsDTO> findAllAdmin() {
+        // findAllByOrderByIdDesc는 GoodsRepository에 정의되어 있습니다.
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByOrderByIdDesc();
         List<GoodsDTO> goodsDTOList = new ArrayList<>();
 
         int goodsNo = goodsEntityList.size();
 
         for (GoodsEntity goodsEntity : goodsEntityList) {
-            // 1. Entity를 DTO로 변환
             GoodsDTO goodsDTO = GoodsDTO.toGoodsDTO(goodsEntity);
-
-            // 2. DTO에 순번을 부여하고 번호를 1 감소
             goodsDTO.setGoodsNo(goodsNo--);
-
-            // 3. 최종 DTO를 리스트에 추가 (한 번만 추가)
             goodsDTOList.add(goodsDTO);
         }
 
         return goodsDTOList;
     }
 
-    // 2. 최신 상품 6개 조회
+    // 3. 최신 상품 6개 조회
     public List<GoodsDTO> findTop6ByOrderByIdDesc() {
         List<GoodsEntity> goodsEntityList = goodsRepository.findTop6ByOrderByIdDesc();
         List<GoodsDTO> goodsDTOList = new ArrayList<>();
@@ -88,7 +118,7 @@ public class GoodsService {
         return goodsDTOList;
     }
 
-    // 3. 상품 상세 조회 (GoodsController에서 사용됨)
+    // 4. 상품 상세 조회
     @Transactional
     public GoodsDTO findById(Long id) {
         Optional<GoodsEntity> optionalGoodsEntity = goodsRepository.findById(id);
@@ -101,11 +131,39 @@ public class GoodsService {
         }
     }
 
-
-
-    // 4. 조회수 증가 (GoodsController에서 사용됨) - 이 메서드는 Repository에 @Modifying 쿼리가 필요함
+    // 5. 조회수 증가
     @Transactional
     public void goodsHits(Long id) {
         goodsRepository.updateHits(id);
+    }
+
+    // 6. 상품 수정 (텍스트만 수정, 파일 정보 유지)
+    @Transactional
+    public GoodsDTO update(GoodsDTO goodsDTO) throws IOException {
+
+        Optional<GoodsEntity> optionalGoodsEntity = goodsRepository.findById(goodsDTO.getId());
+
+        if (optionalGoodsEntity.isPresent()) {
+            GoodsEntity existingEntity = optionalGoodsEntity.get();
+
+            // 텍스트 필드만 업데이트 (파일 정보와 조회수는 existingEntity의 현재 값을 유지)
+            existingEntity.setGoodsOpt(goodsDTO.getGoodsOpt());
+            existingEntity.setGoodsTitle(goodsDTO.getGoodsTitle());
+            existingEntity.setGoodsCost(goodsDTO.getGoodsCost());
+            existingEntity.setGoodsBrand(goodsDTO.getGoodsBrand());
+            existingEntity.setGoodsContents(goodsDTO.getGoodsContents());
+
+            GoodsEntity updatedGoods = goodsRepository.save(existingEntity);
+
+            return GoodsDTO.toGoodsDTO(updatedGoods);
+        } else {
+            return null;
+        }
+    }
+
+    // 7. 상품 삭제
+    @Transactional
+    public void delete(Long id) {
+        goodsRepository.deleteById(id);
     }
 }
