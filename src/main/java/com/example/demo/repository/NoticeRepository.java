@@ -12,9 +12,8 @@ import java.util.List;
 
 @Repository
 public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
-    List<NoticeEntity> findAllByOrderByIdDesc(); // id기준으로 최신 글
+    List<NoticeEntity> findAllByOrderByIdDesc(); // 공지의 id기준으로 최신 글
 
-    // 🚨 누락된 findTop6ByOrderByIdDesc() 쿼리 메소드 추가
     List<NoticeEntity> findTop6ByOrderByIdDesc();
 
 

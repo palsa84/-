@@ -18,24 +18,19 @@ public class NoticeController  {
 
     @GetMapping("/notice")
     public String findAll(Model model) {
-        // 1. 공지사항 목록 조회
+        // 공지사항 목록 조회
         List<NoticeDTO> noticeDTOList = noticeService.findAll();
-
-        // 2. 모델에 데이터 추가
         model.addAttribute("noticeList", noticeDTOList);
-
-        // 3. 뷰 경로 반환
         return "/notice/list";
     }
 
-    // NoticeController.java
     @GetMapping("/notice/detail/{id}")
     public String findById(@PathVariable("id") Long id, Model model) {
 
         noticeService.updateHits(id);
         NoticeDTO noticeDTO = noticeService.findById(id);
-        model.addAttribute("notice", noticeDTO); // 'notice' 이름으로 전달
-        return "/notice/detail"; // detail.html 뷰 반환
+        model.addAttribute("notice", noticeDTO);
+        return "/notice/detail";
     }
 
 

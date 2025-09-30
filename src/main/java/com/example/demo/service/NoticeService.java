@@ -35,13 +35,10 @@ public class NoticeService {
         return  noticeDTOList;
     }
 
-    // 🚨 HomeContoroller에서 호출하는 findTop6ByOrderByIdDesc() 메소드 추가
     public List<NoticeDTO> findTop6ByOrderByIdDesc() {
-        // NoticeRepository에 정의된 쿼리 메소드 호출
         List<NoticeEntity> noticeEntityList = noticeRepository.findTop6ByOrderByIdDesc();
         List<NoticeDTO> noticeDTOList = new ArrayList<>();
 
-        // Entity 리스트를 DTO 리스트로 변환
         for(NoticeEntity noticeEntity: noticeEntityList) {
             noticeDTOList.add(NoticeDTO.toNoticeDTO(noticeEntity));
         }

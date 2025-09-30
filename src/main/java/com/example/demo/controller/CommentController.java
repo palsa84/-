@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/comment")  // Ajax 경로와 일치시킴
+@RequestMapping("/comment")
 @RequiredArgsConstructor
 public class CommentController {
 

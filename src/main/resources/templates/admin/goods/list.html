@@ -31,12 +31,12 @@
     </thead>
     <tbody>
     <tr th:each="goods: ${goodsList}">
-      <td class="text-center" th:text="${goods.id}"></td>
+      <td class="text-center" th:text="${goods.goodsNo}"></td>
       <td class="text-center">
         <img th:src="@{|/upload/${goods.storedFileName}|}" style="width:100px; max-width: 100%;">
       </td>
       <td> <a th:href="@{|/admin/goods/detail/${goods.id}|}" th:text="${goods.goodsTitle}"></a></td>
-      <td class="text-center" th:text="${goods.goodsCost}"></td>
+      <td class="text-center" th:text="|${goods.goodsCost}원|"></td>
       <td class="text-center" th:text="${goods.goodsBrand}"></td>
       <td class="text-center" th:text="${#temporals.format(goods.createdTime, 'yyyy-MM-dd')}"></td>
 

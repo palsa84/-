@@ -1,5 +1,3 @@
-// BaseEntity.java
-
 package com.example.demo.entity;
 
 import jakarta.persistence.Column;

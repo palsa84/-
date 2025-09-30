@@ -26,10 +26,8 @@ public class GoodsService {
     private final GoodsRepository goodsRepository;
     private final GoodsFileRepository goodsFileRepository;
 
-    // 상품 등록 및 파일 저장
     public void save(GoodsDTO goodsDTO) throws IOException {
 
-        // 1. 첨부파일 처리 로직...
         if (goodsDTO.getGoodsFile() == null || goodsDTO.getGoodsFile().isEmpty()) {
             goodsDTO.setFileAttached(0);
             goodsDTO.setOriginalFileName(null);
@@ -46,11 +44,9 @@ public class GoodsService {
             goodsDTO.setFileAttached(1); // 파일 있음
         }
 
-        // 2. Entity 저장 로직...
         GoodsEntity goodsEntity = GoodsEntity.toSaveEntity(goodsDTO);
         GoodsEntity savedGoods = goodsRepository.save(goodsEntity);
 
-        // 3. GoodsFileEntity 저장 로직...
         if (goodsDTO.getFileAttached() == 1) {
             GoodsFileEntity goodsFileEntity = GoodsFileEntity.toGoodsFileEntity(
                     savedGoods,
@@ -61,7 +57,6 @@ public class GoodsService {
         }
     }
 
-    // 1. 사용자 페이지용: 상품 목록 전체 조회 (페이지네이션 + 필터링 적용)
     @Transactional
     public Page<GoodsDTO> findAll(Pageable pageable, String category) {
         int page = pageable.getPageNumber() == 0 ? 0 : pageable.getPageNumber() - 1;
@@ -79,7 +74,6 @@ public class GoodsService {
             // 특정 카테고리로 필터링
             goodsEntityPage = goodsRepository.findByGoodsOpt(category, pageRequest);
         } else {
-            // 🌟 'all' 또는 category가 null일 때 전체 조회 (이 로직이 중요합니다)
             goodsEntityPage = goodsRepository.findAll(pageRequest);
         }
 
@@ -88,17 +82,17 @@ public class GoodsService {
         return goodsDTOPage;
     }
 
-    // 2. 관리자 페이지용: 상품 목록 전체 조회 및 순번 부여 (페이지네이션 없음)
     @Transactional
     public List<GoodsDTO> findAllAdmin() {
-        // findAllByOrderByIdDesc는 GoodsRepository에 정의되어 있습니다.
         List<GoodsEntity> goodsEntityList = goodsRepository.findAllByOrderByIdDesc();
         List<GoodsDTO> goodsDTOList = new ArrayList<>();
 
+        // 1. 목록의 총 개수(순번의 시작 번호)를 가져옴
         int goodsNo = goodsEntityList.size();
 
         for (GoodsEntity goodsEntity : goodsEntityList) {
             GoodsDTO goodsDTO = GoodsDTO.toGoodsDTO(goodsEntity);
+            // 2. goodsNo를 셋팅하고 1씩 감소시킴 (가장 최신 글이 가장 낮은 번호를 갖게 됨)
             goodsDTO.setGoodsNo(goodsNo--);
             goodsDTOList.add(goodsDTO);
         }

@@ -1,5 +1,3 @@
-<!--notice/detail.html-->
-
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -8,38 +6,45 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" th:href="@{/css/custom.css}">
-    <title></title>
+    <title th:text="|공지사항: ${notice.noticeTitle}|">공지사항 상세</title>
 </head>
 <body>
 <div th:replace="~{admin/include/adminHeader.html :: adminHeader}"></div>
 
-<div class="container">
+<div class = "container my-5">
+    <h2 class="mb-4">공지사항</h2>
 
-
-    <div class="jumbotron jumbotron-fluid" style="background-color: transparent;">
-        <div class="container">
-            <h1 class="display-4">Fluid jumbotron</h1>
-            <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
-        </div>
+    <div class="card-body p-0">
+        <table class="table table-bordered mb-4">
+            <tbody>
+            <tr>
+                <th class="bg-light" style="width: 20%;">제목</th>
+                <td th:text="${notice.noticeTitle}"></td>
+            </tr>
+            <tr>
+                <th class="bg-light">작성자</th>
+                <td th:text="${notice.noticeWriter}"></td>
+            </tr>
+            <tr>
+                <th class="bg-light">작성일</th>
+                <td th:text="${#temporals.format(notice.noticeCreatedTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            </tr>
+            <tr>
+                <th class="bg-light">조회수</th>
+                <td th:text="${notice.noticeHits}"></td>
+            </tr>
+            <tr>
+                <th class="bg-light">내용</th>
+                <td style="height:200px; vertical-align:top; white-space: pre-wrap;" th:text="${notice.noticeContents}">공지사항 본문 내용입니다.</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
-    <h3>공지사항</h3>
-    <div class="card">
-        <h5 class="card-header" th:text="|날짜: *{#temporals.format(notice.noticeCreatedTime, 'yyyy-MM-dd HH:mm:ss')} 조회: ${notice.noticeHits}|">Featured</h5>
-        <div class="card-body">
-            <h5 class="card-title"th:text="${notice.noticeTitle}"></h5>
-            <p class="card-text" th:text="${notice.noticeContents}"></p>
-        </div>
-    </div>
-    <a th:href="@{/admin/notice/}" class="btn btn-primary my-4">목록</a>
-    <a th:href="@{/admin/notice/edit/{id} (id=${notice.id})}" class="btn btn-warning">수정</a>
-    <a th:href="@{/admin/notice/delete/{id}(id=${notice.id})}" class="btn btn-danger">삭제</a>
-</div>
-
-<div class="jumbotron jumbotron-fluid my-4" style="background-color: transparent;">
-    <div class="container">
-        <h1 class="display-4">Fluid jumbotron</h1>
-        <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+    <div class="text-right">
+        <a th:href="@{/admin/notice}" class="btn btn-primary">목록</a>
+        <a th:href="@{/admin/notice/edit/{id} (id=${notice.id})}" class="btn btn-warning ml-2">수정</a>
+        <a th:href="@{/admin/notice/delete/{id}(id=${notice.id})}" class="btn btn-danger ml-2">삭제</a>
     </div>
 </div>
 

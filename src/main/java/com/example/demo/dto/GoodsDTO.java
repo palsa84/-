@@ -22,8 +22,7 @@ public class GoodsDTO {
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
 
-    // 🌟 이전에 누락되어 오류를 발생시킨 필드입니다.
-    private int goodsNo; // ⬅️ GoodsService에서 setGoodsNo(int)를 호출하기 위해 추가
+    private int goodsNo;
 
     private MultipartFile goodsFile; //파일 담는 용도
     private String originalFileName; //원본파일이름
@@ -40,12 +39,10 @@ public class GoodsDTO {
         this.category = category;
     }
 
-// GoodsDTO.java 파일 내의 toGoodsDTO 메서드
 
     public static GoodsDTO toGoodsDTO(GoodsEntity goodsEntity) {
-        GoodsDTO goodsDTO = new GoodsDTO(); // ⬅️ 이 객체 이름이 'goodsDTO'입니다.
+        GoodsDTO goodsDTO = new GoodsDTO();
 
-        // 1. 기본 필드 복사
         goodsDTO.setId(goodsEntity.getId());
         goodsDTO.setGoodsOpt(goodsEntity.getGoodsOpt());
         goodsDTO.setGoodsTitle(goodsEntity.getGoodsTitle());
@@ -53,22 +50,15 @@ public class GoodsDTO {
         goodsDTO.setGoodsBrand(goodsEntity.getGoodsBrand());
         goodsDTO.setGoodsContents(goodsEntity.getGoodsContents());
         goodsDTO.setGoodsHits(goodsEntity.getGoodsHits());
-
-
         // 카테고리
         goodsDTO.setCategory(goodsEntity.getGoodsOpt());
-
-        // 2. BaseEntity 필드 복사
         goodsDTO.setCreatedTime(goodsEntity.getCreatedTime());
         goodsDTO.setUpdatedTime(goodsEntity.getUpdatedTime());
-
-        // 3. 파일 첨부 여부 설정
+        // 파일 첨부 여부 설정
         goodsDTO.setFileAttached(goodsEntity.getFileAttached());
 
-
-        // 4. 파일 첨부 정보 복사 (첨부 파일이 있을 때만 실행)
+        // 파일 첨부 정보 복사 (첨부 파일이 있을 때)
         if (goodsEntity.getFileAttached() == 1) {
-            // GoodsFileEntityList에서 파일 이름 정보를 가져와 DTO에 설정
             if (!goodsEntity.getGoodsFileEntityList().isEmpty()) {
                 goodsDTO.setOriginalFileName(goodsEntity.getGoodsFileEntityList().get(0).getOriginalFileName());
                 goodsDTO.setStoredFileName(goodsEntity.getGoodsFileEntityList().get(0).getStoredFileName());
